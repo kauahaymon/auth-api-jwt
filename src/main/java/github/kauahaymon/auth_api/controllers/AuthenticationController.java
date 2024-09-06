@@ -1,6 +1,7 @@
 package github.kauahaymon.auth_api.controllers;
 
 import github.kauahaymon.auth_api.dtos.AuthPayload;
+import github.kauahaymon.auth_api.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,12 +17,15 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     @PostMapping
     public String auth(@RequestBody AuthPayload authPayload) {
 
         var userAuthenticationToken = new UsernamePasswordAuthenticationToken(authPayload.login(), authPayload.password());
         authenticationManager.authenticate(userAuthenticationToken);
 
-        return "token <<<";
+        return authenticationService.getToken(authPayload);
     }
 }
