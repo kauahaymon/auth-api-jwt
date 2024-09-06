@@ -3,6 +3,7 @@ package github.kauahaymon.auth_api.services.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import github.kauahaymon.auth_api.dtos.AuthPayload;
 import github.kauahaymon.auth_api.entities.User;
 import github.kauahaymon.auth_api.repositories.UserRepository;
@@ -46,6 +47,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         } catch (JWTCreationException e) {
             throw new RuntimeException("Error while generating token" + e.getMessage());
+        }
+    }
+
+    public String validateToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("my-secret");
+            return JWT.require(algorithm)
+                    .withIssuer("auth-api")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException e) {
+            return "";
         }
     }
 
